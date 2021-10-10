@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using CommandAPI.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace CommandAPI
 {
@@ -27,9 +28,12 @@ namespace CommandAPI
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            //SECTION 1. Add code below
+            var builder = new NpgsqlConnectionStringBuilder();
+            builder.ConnectionString =Configuration.GetConnectionString("PostgreSqlConnection");
+            builder.Username = Configuration["UserID"];
+            builder.Password = Configuration["Password"];
 
-            services.AddDbContext<CommandContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("PostgreSqlConnection")));
+            services.AddDbContext<CommandContext>(opt => opt.UseNpgsql(builder.ConnectionString));
 
             services.AddControllers();
 
